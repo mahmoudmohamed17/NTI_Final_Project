@@ -1,0 +1,15 @@
+<nav style="display: flex; gap: 20px; padding: 16px; background: #1976d2; color: white;">
+  <a  [routerLink]="['/home']" style="color: white; text-decoration: none;">Home</a>
+  <a [routerLink]="['/about']" style="color: white; text-decoration: none;">About</a>
+  <a [routerLink]="['/cart']" style="color: white; text-decoration: none;">Cart</a>
+</nav>
+<div style="padding: 20px;">
+  <h2>Welcome to the Products Page</h2>
+  <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+    <div *ngFor="let product of products" style="border: 1px solid #ccc; border-radius: 8px; padding: 16px; width: 200px;">
+      <h4>{{ product.name }}</h4>
+      <p>{{ product.description }}</p>
+      <p><strong>\${{ product.price }}</strong></p>
+    </div>
+  </div>
+</div>
