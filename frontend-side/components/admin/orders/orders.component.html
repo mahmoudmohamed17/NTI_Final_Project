@@ -1,0 +1,125 @@
+<div class="container py-4">
+  <div class="mb-4">
+    <h1 class="display-5 fw-bold mb-2 animate__animated animate__fadeInLeft">
+      <i class="bi bi-list-check me-2 text-primary"></i>Manage Orders
+    </h1>
+    <p class="text-muted animate__animated animate__fadeInUp animate__delay-1s">
+      Track and manage customer orders efficiently
+    </p>
+  </div>
+
+  @if (orders.length === 0) {
+    <div class="text-center py-5 animate__animated animate__fadeIn">
+      <i class="bi bi-inbox display-1 text-muted mb-4"></i>
+      <h3 class="text-muted mb-3">No orders found</h3>
+      <p class="text-muted">Orders will appear here when customers place them.</p>
+    </div>
+  } @else {
+    <div class="row">
+      @for (order of orders; track order._id) {
+        <div class="col-lg-6 mb-4 animate__animated animate__fadeInUp">
+          <div class="card border-0 shadow-sm h-100">
+            <div class="card-header d-flex justify-content-between align-items-center bg-primary text-white">
+              <h6 class="mb-0">
+                <i class="bi bi-receipt me-2"></i>Order #{{ order._id?.slice(-8) }}
+              </h6>
+              <span class="badge fs-6" [class]="getStatusBadgeClass(order.status)">
+                <i class="bi bi-circle-fill me-1"></i>{{ order.status | titlecase }}
+              </span>
+            </div>
+            <div class="card-body">
+              <div class="row mb-3">
+                <div class="col-6">
+                  <strong class="text-muted">Customer:</strong><br>
+                  @if (isUserObject(order.user)) {
+                    <span class="fw-bold">{{ order.user.name }}</span><br>
+                    <small class="text-muted">{{ order.user.email }}</small>
+                  } @else {
+                    <span class="text-muted">User ID: {{ order.user }}</span>
+                  }
+                </div>
+                <div class="col-6 text-end">
+                  <strong class="text-muted">Date:</strong><br>
+                  <span class="fw-bold">{{ order.createdAt | date:'short' }}</span><br>
+                  <strong class="text-primary">${{ order.total.toFixed(2) }}</strong>
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <strong class="text-muted">Items ({{ getTotalItems(order) }}):</strong>
+                <div class="mt-2">
+                  @for (item of order.items; track item.product._id) {
+                    <div class="d-flex justify-content-between align-items-center mb-2 p-2 bg-light rounded">
+                      <div>
+                        <span class="fw-bold">{{ item.product.name }}</span>
+                        <br>
+                        <small class="text-muted">Qty: {{ item.quantity }}</small>
+                      </div>
+                      <span class="fw-bold">${{ (item.product.price * item.quantity).toFixed(2) }}</span>
+                    </div>
+                  }
+                </div>
+              </div>
+
+              <div class="d-flex justify-content-between align-items-center">
+                <select 
+                  class="form-select form-select-sm w-auto" 
+                  [value]="order.status"
+                  (change)="updateOrderStatus(order._id!, $any($event.target).value)">
+                  <option value="pending">⏳ Pending</option>
+                  <option value="processing">⚙️ Processing</option>
+                  <option value="shipped">📦 Shipped</option>
+                  <option value="delivered">✅ Delivered</option>
+                  <option value="cancelled">❌ Cancelled</option>
+                </select>
+                <small class="text-muted">
+                  <i class="bi bi-clock me-1"></i>Updated: {{ order.updatedAt | date:'short' }}
+                </small>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Order Statistics -->
+    <div class="row mt-4">
+      <div class="col-md-3">
+        <div class="card border-0 shadow-sm text-center bg-primary text-white">
+          <div class="card-body">
+            <i class="bi bi-clock display-4 mb-2"></i>
+            <h4>{{ getPendingCount() }}</h4>
+            <p class="mb-0">Pending</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card border-0 shadow-sm text-center bg-info text-white">
+          <div class="card-body">
+            <i class="bi bi-gear display-4 mb-2"></i>
+            <h4>{{ getProcessingCount() }}</h4>
+            <p class="mb-0">Processing</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card border-0 shadow-sm text-center bg-warning text-white">
+          <div class="card-body">
+            <i class="bi bi-truck display-4 mb-2"></i>
+            <h4>{{ getShippedCount() }}</h4>
+            <p class="mb-0">Shipped</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card border-0 shadow-sm text-center bg-success text-white">
+          <div class="card-body">
+            <i class="bi bi-check-circle display-4 mb-2"></i>
+            <h4>{{ getDeliveredCount() }}</h4>
+            <p class="mb-0">Delivered</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>

@@ -1,0 +1,9 @@
+<div style="padding: 20px;">
+  <h2>Your Cart</h2>
+  <div *ngIf="items.length === 0">Cart is empty!</div>
+  <div *ngFor="let item of items" style="border-bottom: 1px solid #ccc; padding: 10px 0;">
+    <h4>{{ item.name }}</h4>
+    <p>{{ item.description }}</p>
+    <strong>${{ item.price }}</strong>
+  </div>
+</div>

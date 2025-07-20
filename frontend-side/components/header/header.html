@@ -1,0 +1,15 @@
+<header class="header">
+  <h1 class="store-title">My Store</h1>
+  <nav class="home-nav">
+    Home
+  </nav>
+  <nav class="about-nav">
+    About
+  </nav>
+  <nav>
+    <div class="cart-info">
+      <span class="cart-icon">🛒</span>
+      <span class="cart-count" *ngIf="getCartCount() > 0">{{ getCartCount() }}</span>
+    </div>
+  </nav>
+</header>

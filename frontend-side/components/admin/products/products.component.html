@@ -1,0 +1,204 @@
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1 class="display-5 fw-bold mb-2 animate__animated animate__fadeInLeft">
+        <i class="bi bi-box me-2 text-primary"></i>Manage Products
+      </h1>
+      <p class="text-muted animate__animated animate__fadeInUp animate__delay-1s">
+        Add, edit, and manage your product inventory
+      </p>
+    </div>
+    <button class="btn btn-primary btn-lg animate__animated animate__fadeInRight" 
+            (click)="isAddingProduct = true; editingProduct = null; resetForm()">
+      <i class="bi bi-plus-circle me-2"></i>Add New Product
+    </button>
+  </div>
+
+  <!-- Add/Edit Product Form -->
+  @if (isAddingProduct || editingProduct) {
+    <div class="card mb-4 border-0 shadow-lg animate__animated animate__fadeInUp">
+      <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">
+          <i class="bi bi-pencil me-2"></i>{{ editingProduct ? 'Edit Product' : 'Add New Product' }}
+        </h5>
+      </div>
+      <div class="card-body p-4">
+        <form (ngSubmit)="editingProduct ? updateProduct() : addProduct()">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="name" class="form-label fw-bold">
+                  <i class="bi bi-tag me-2"></i>Product Name
+                </label>
+                <input 
+                  type="text" 
+                  class="form-control form-control-lg" 
+                  id="name" 
+                  [(ngModel)]="(editingProduct || newProduct).name"
+                  name="name"
+                  required>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="category" class="form-label fw-bold">
+                  <i class="bi bi-collection me-2"></i>Category
+                </label>
+                <input 
+                  type="text" 
+                  class="form-control form-control-lg" 
+                  id="category" 
+                  [(ngModel)]="(editingProduct || newProduct).category"
+                  name="category"
+                  required>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="description" class="form-label fw-bold">
+              <i class="bi bi-text-paragraph me-2"></i>Description
+            </label>
+            <textarea 
+              class="form-control" 
+              id="description" 
+              rows="3"
+              [(ngModel)]="(editingProduct || newProduct).description"
+              name="description"
+              required></textarea>
+          </div>
+
+          <div class="row">
+            <div class="col-md-4">
+              <div class="mb-3">
+                <label for="price" class="form-label fw-bold">
+                  <i class="bi bi-currency-dollar me-2"></i>Price ($)
+                </label>
+                <input 
+                  type="number" 
+                  class="form-control form-control-lg" 
+                  id="price" 
+                  [(ngModel)]="(editingProduct || newProduct).price"
+                  name="price"
+                  step="0.01"
+                  min="0"
+                  required>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="mb-3">
+                <label for="quantity" class="form-label fw-bold">
+                  <i class="bi bi-boxes me-2"></i>Quantity
+                </label>
+                <input 
+                  type="number" 
+                  class="form-control form-control-lg" 
+                  id="quantity" 
+                  [(ngModel)]="(editingProduct || newProduct).quantity"
+                  name="quantity"
+                  min="0"
+                  required>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="mb-3">
+                <label for="image" class="form-label fw-bold">
+                  <i class="bi bi-image me-2"></i>Product Image
+                </label>
+                <input 
+                  type="file" 
+                  class="form-control form-control-lg" 
+                  id="image" 
+                  (change)="onFileSelected($event)"
+                  accept="image/*">
+              </div>
+            </div>
+          </div>
+
+          @if ((editingProduct || newProduct).image) {
+            <div class="mb-3">
+              <img [src]="(editingProduct || newProduct).image" alt="Preview" class="img-thumbnail" style="max-height: 200px;">
+            </div>
+          }
+
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary btn-lg">
+              <i class="bi bi-check-circle me-2"></i>{{ editingProduct ? 'Update Product' : 'Add Product' }}
+            </button>
+            <button type="button" class="btn btn-secondary btn-lg" (click)="cancelEdit()">
+              <i class="bi bi-x-circle me-2"></i>Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+
+  <!-- Products Table -->
+  <div class="card border-0 shadow-lg">
+    <div class="card-header bg-success text-white">
+      <h5 class="mb-0">
+        <i class="bi bi-list me-2"></i>All Products ({{ products.length }})
+      </h5>
+    </div>
+    <div class="card-body">
+      @if (products.length === 0) {
+        <div class="text-center py-5">
+          <i class="bi bi-box display-1 text-muted mb-3"></i>
+          <h4 class="text-muted">No products found</h4>
+          <p class="text-muted">Start by adding your first product!</p>
+        </div>
+      } @else {
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (product of products; track product._id) {
+                <tr class="animate__animated animate__fadeInUp">
+                  <td>
+                    <img [src]="product.image" [alt]="product.name" class="img-thumbnail" style="width: 60px; height: 60px; object-fit: cover;">
+                  </td>
+                  <td>
+                    <strong>{{ product.name }}</strong>
+                    <br>
+                    <small class="text-muted">{{ product.description | slice:0:50 }}...</small>
+                  </td>
+                  <td>
+                    <span class="badge bg-secondary">{{ product.category }}</span>
+                  </td>
+                  <td>
+                    <span class="fw-bold text-primary">${{ product.price.toFixed(2) }}</span>
+                  </td>
+                  <td>
+                    <span class="badge" [class]="product.quantity === 0 ? 'bg-danger' : product.quantity <= 5 ? 'bg-warning' : 'bg-success'">
+                      {{ product.quantity }}
+                    </span>
+                  </td>
+                  <td>
+                    <div class="btn-group btn-group-sm">
+                      <button class="btn btn-outline-primary" (click)="editProduct(product)" title="Edit">
+                        <i class="bi bi-pencil"></i>
+                      </button>
+                      <button class="btn btn-outline-danger" (click)="deleteProduct(product._id!)" title="Delete">
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+  </div>
+</div>
