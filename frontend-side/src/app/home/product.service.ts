@@ -14,6 +14,15 @@ export interface Product {
   providedIn: 'root'
 })
 export class ProductService {
+  deleteProduct(productId: string) {
+    throw new Error('Method not implemented.');
+  }
+  updateProduct(_id: string, editingProduct: Product) {
+    throw new Error('Method not implemented.');
+  }
+  addProduct(newProduct: Omit<Product, "_id">) {
+    throw new Error('Method not implemented.');
+  }
   private apiUrl = 'http://localhost:3000/products';
 
   constructor(private http: HttpClient) {}

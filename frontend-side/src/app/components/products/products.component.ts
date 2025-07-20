@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ProductService } from '../../../services/product.service';
-import { Product } from '../../../interfaces/product.interface';
+import { Product, ProductService } from '../../home/product.service';
 
 @Component({
   selector: 'app-products',
@@ -18,8 +17,6 @@ export class ProductsComponent implements OnInit {
     description: '',
     price: 0,
     image: '',
-    quantity: 0,
-    category: ''
   };
   editingProduct: Product | null = null;
   isAddingProduct = false;
@@ -35,11 +32,11 @@ export class ProductsComponent implements OnInit {
   loadProducts(): void {
     this.isLoading = true;
     this.productService.getAllProducts().subscribe({
-      next: (products) => {
+      next: (products: Product[]) => {
         this.products = products;
         this.isLoading = false;
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Error loading products:', error);
         this.isLoading = false;
         alert('Failed to load products. Please try again.');
@@ -51,7 +48,6 @@ export class ProductsComponent implements OnInit {
     const file = event.target.files[0];
     if (file) {
       this.selectedFile = file;
-      // Convert to base64 for demo purposes
       const reader = new FileReader();
       reader.onload = (e: any) => {
         this.newProduct.image = e.target.result;
@@ -76,7 +72,7 @@ export class ProductsComponent implements OnInit {
         this.isAddingProduct = false;
         alert('Product added successfully!');
       },
-      error: (error) => {
+      error: (error: { error: { error: any; }; }) => {
         console.error('Error adding product:', error);
         if (error.error?.error) {
           alert(error.error.error);
@@ -104,7 +100,7 @@ export class ProductsComponent implements OnInit {
         this.editingProduct = null;
         alert('Product updated successfully!');
       },
-      error: (error) => {
+      error: (error: { error: { error: any; }; }) => {
         console.error('Error updating product:', error);
         if (error.error?.error) {
           alert(error.error.error);
@@ -127,12 +123,12 @@ export class ProductsComponent implements OnInit {
           this.loadProducts();
           alert('Product deleted successfully!');
         },
-        error: (error) => {
+        error: (error: { error: { error: any; }; }) => {
           console.error('Error deleting product:', error);
           if (error.error?.error) {
             alert(error.error.error);
           } else {
-            alert('Failed to delete product. Please try again.');
+            alert('Failed to delete product.');
           }
         }
       });
@@ -150,8 +146,6 @@ export class ProductsComponent implements OnInit {
       description: '',
       price: 0,
       image: '',
-      quantity: 0,
-      category: ''
     };
     this.selectedFile = null;
   }
